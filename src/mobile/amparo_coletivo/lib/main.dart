@@ -36,12 +36,6 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeNotifier = provider.Provider.of<ThemeNotifier>(context);
 
-    // Pegando o usuário logado
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user != null) {
-      logger.i('Auth UID: ${user.id}');
-    }
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Amparo Coletivo',
