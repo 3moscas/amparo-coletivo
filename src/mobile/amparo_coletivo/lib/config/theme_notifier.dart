@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 
 class ThemeNotifier extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
+  bool _isDarkMode = false;
 
   // leitura booleana direta (usada em alguns widgets)
-  bool get isDarkMode => _themeMode == ThemeMode.dark;
+  bool get isDarkMode => _isDarkMode;
 
   // getter compatível com MaterialApp.themeMode
-  ThemeMode get themeMode => _themeMode;
+  ThemeMode get themeMode => _isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
   // alternativa compatível caso o código antigo use 'currentTheme'
-  ThemeMode get currentTheme => _themeMode;
+  ThemeMode get currentTheme => themeMode;
 
-  // método para definir explicitamente usando ThemeMode
-  void setTheme(ThemeMode mode) {
-    _themeMode = mode;
-    notifyListeners();
-  }
-
-  // método para definir usando bool (compatibilidade com código antigo)
-  void setThemeBool(bool isDark) {
-    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+  // método para definir explicitamente (compatível com setTheme)
+  void setTheme(bool isDark) {
+    _isDarkMode = isDark;
     notifyListeners();
   }
 
   // método para alternar (toggle)
   void toggleTheme() {
-    _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    _isDarkMode = !_isDarkMode;
     notifyListeners();
   }
 }

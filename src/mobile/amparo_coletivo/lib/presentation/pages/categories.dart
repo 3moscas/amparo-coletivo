@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:amparo_coletivo/presentation/pages/list_by_category.dart';
+import 'package:amparo_coletivo/shared/widgets/custom_drawer.dart';
 
 class Categories extends StatelessWidget {
   const Categories({super.key});
@@ -8,37 +9,43 @@ class Categories extends StatelessWidget {
     {
       'nome': 'Saúde',
       'imagem':
-          'https://images.unsplash.com/photo-1527613426441-4da17471b66d?q=80&w=1152&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+          'https://images.unsplash.com/photo-1527613426441-4da17471b66d?q=80&w=1152&auto=format&fit=crop'
     },
     {
       'nome': 'Educação',
       'imagem':
-          'https://images.unsplash.com/photo-1512238972088-8acb84db0771?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+          'https://images.unsplash.com/photo-1512238972088-8acb84db0771?q=80&w=1170&auto=format&fit=crop'
     },
     {
       'nome': 'Meio Ambiente',
       'imagem':
-          'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+          'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1170&auto=format&fit=crop'
     },
     {
       'nome': 'Animais',
       'imagem':
-          'https://images.unsplash.com/photo-1493916665398-143bdeabe500?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+          'https://images.unsplash.com/photo-1493916665398-143bdeabe500?q=80&w=1074&auto=format&fit=crop'
     },
     {
       'nome': 'Moradia',
       'imagem':
-          'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+          'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1170&auto=format&fit=crop'
     },
-    {'nome': 'Outros', 'imagem': 'https://source.unsplash.com/600x400/?help'},
+    {
+      'nome': 'Outros',
+      'imagem':
+          'https://unsplash.com/pt-br/fotografias/gesto-de-gratidao-aperto-de-mao-em-agradecimento-aos-voluntarios-e-colegas-por-tras-da-distribuicao-de-doacoes-em-centro-de-caridade-sem-rostos-fMebGnNxiCw'
+    },
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: const Text('Categorias de ONGs'),
-        backgroundColor: Colors.green,
+        title: const Text("Categorias de ONGs"),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(16),
@@ -64,44 +71,47 @@ class Categories extends StatelessWidget {
               );
             },
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(18),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   Image.network(
                     imagem,
                     fit: BoxFit.cover,
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) return child;
-                      return const Center(child: CircularProgressIndicator());
+                    loadingBuilder: (context, child, loading) {
+                      if (loading == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     },
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (context, error, stack) => Container(
                       color: Colors.grey[300],
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.image_not_supported),
+                      child: const Icon(Icons.broken_image, size: 40),
                     ),
                   ),
+
+                  // camada escura
                   Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.black26,
-                    ),
+                    color: Colors.black.withOpacity(0.35),
                   ),
+
+                  // texto
                   Center(
                     child: Text(
                       nome,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
+                            blurRadius: 8,
                             color: Colors.black,
-                            blurRadius: 6,
                             offset: Offset(1, 1),
                           )
                         ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   )
                 ],

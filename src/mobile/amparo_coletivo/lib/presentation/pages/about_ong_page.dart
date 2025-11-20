@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:amparo_coletivo/presentation/pages/donation.dart';
 import 'package:amparo_coletivo/shared/widgets/custom_drawer.dart';
+import 'package:amparo_coletivo/presentation/pages/ong_posts_page.dart';
 
 class AboutOngPage extends StatelessWidget {
   final Map<String, dynamic> ongData;
@@ -9,9 +9,6 @@ class AboutOngPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PageController carouselController =
-        PageController(viewportFraction: 0.85);
-
     return Scaffold(
       drawer: const CustomDrawer(),
       appBar: AppBar(
@@ -29,13 +26,13 @@ class AboutOngPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => DonationPage(ongData: ongData),
+              builder: (_) => OngPostsPage(ongData: ongData),
             ),
           );
         },
-        label: const Text('Doar'),
-        icon: const Icon(Icons.volunteer_activism),
-        backgroundColor: Colors.green,
+        label: const Text('Ver postagens'),
+        icon: const Icon(Icons.article),
+        backgroundColor: Colors.blue,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
@@ -65,18 +62,11 @@ class AboutOngPage extends StatelessWidget {
                       width: MediaQuery.of(context).size.width * 0.9,
                       height: 200,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey.shade300,
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        height: 200,
-                        alignment: Alignment.center,
-                        child: const Text("Imagem não carregada"),
-                      ),
                     )
                   : Container(
                       color: Colors.grey.shade300,
-                      width: MediaQuery.of(context).size.width * 0.9,
                       height: 200,
+                      width: MediaQuery.of(context).size.width * 0.9,
                       alignment: Alignment.center,
                       child: const Text("Sem imagem disponível"),
                     ),
@@ -89,7 +79,9 @@ class AboutOngPage extends StatelessWidget {
                   Text(
                     ongData['title'] ?? 'ONG',
                     style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10),
@@ -102,32 +94,6 @@ class AboutOngPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            SizedBox(
-              height: 180,
-              child: PageView.builder(
-                controller: carouselController,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        color: Colors.blue.shade400,
-                        child: Center(
-                          child: Text(
-                            'Destaque ${index + 1}',
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 18),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 80),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:amparo_coletivo/admin/create_post_page.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -274,6 +275,19 @@ class _AdminPageState extends State<AdminPage> {
         padding: const EdgeInsets.all(16),
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          // ---- BOTÃO PARA CRIAR POST ----
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PostCreatePage()),
+              );
+            },
+            icon: const Icon(Icons.post_add),
+            label: const Text("Criar Postagem"),
+          ),
+          const SizedBox(height: 20),
+
           Card(
             elevation: 2,
             shape:

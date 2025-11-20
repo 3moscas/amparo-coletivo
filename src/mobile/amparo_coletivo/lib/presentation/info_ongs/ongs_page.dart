@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:amparo_coletivo/shared/widgets/custom_drawer.dart';
-import 'package:amparo_coletivo/presentation/pages/donation.dart';
+import 'package:amparo_coletivo/presentation/pages/ong_posts_page.dart';
 
 class OngsPage extends StatelessWidget {
   final Map<String, dynamic> ongData;
@@ -28,19 +28,22 @@ class OngsPage extends StatelessWidget {
         elevation: 0,
       ),
       drawer: const CustomDrawer(),
+
+      // ⚡ NOVO BOTÃO
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => DonationPage(ongData: ongData),
+              builder: (_) => OngPostsPage(ongData: ongData),
             ),
           );
         },
-        label: const Text('Doar'),
-        icon: const Icon(Icons.volunteer_activism),
-        backgroundColor: Colors.green,
+        label: const Text('Ver publicações'),
+        icon: const Icon(Icons.feed),
+        backgroundColor: Colors.blue,
       ),
+
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
