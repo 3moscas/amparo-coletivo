@@ -11,7 +11,8 @@ class Routes {
 }
 
 class Images {
-  static const String logo = 'assets/images/logo.png';
+  static const String logo =
+      'https://luooeidsfkypyctvytok.supabase.co/storage/v1/object/public/amparo_coletivo/Amparo_Coletivo-logo.png';
 }
 
 class Colors {

@@ -35,9 +35,11 @@ class _HomePageState extends State<HomePage> {
         _loading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao carregar dados: $e')),
       );
+
       setState(() => _loading = false);
     }
   }

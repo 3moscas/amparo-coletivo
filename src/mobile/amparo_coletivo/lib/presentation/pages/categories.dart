@@ -34,7 +34,7 @@ class Categories extends StatelessWidget {
     {
       'nome': 'Outros',
       'imagem':
-          'https://unsplash.com/pt-br/fotografias/gesto-de-gratidao-aperto-de-mao-em-agradecimento-aos-voluntarios-e-colegas-por-tras-da-distribuicao-de-doacoes-em-centro-de-caridade-sem-rostos-fMebGnNxiCw'
+          'https://images.unsplash.com/photo-1596495577886-d920f1b62f90?q=80&w=1170&auto=format&fit=crop'
     },
   ];
 
@@ -92,7 +92,7 @@ class Categories extends StatelessWidget {
 
                   // camada escura
                   Container(
-                    color: Colors.black.withOpacity(0.35),
+                    color: Colors.black.withValues(alpha: 0.35),
                   ),
 
                   // texto

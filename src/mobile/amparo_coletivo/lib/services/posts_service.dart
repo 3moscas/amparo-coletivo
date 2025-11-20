@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:developer' as developer;
 
 final supabase = Supabase.instance.client;
 
 class PostsService {
+  static const String bucket = "post_images"; // 🔥 ATUALIZADO
+
   // --------------------------------------------------------------------------
   // UPLOAD DE IMAGEM (WEB + MOBILE)
   // --------------------------------------------------------------------------
@@ -15,16 +18,18 @@ class PostsService {
       final id = postId ?? DateTime.now().millisecondsSinceEpoch.toString();
       final fileName = "post_$id.jpg";
 
-      await supabase.storage.from('posts').uploadBinary(
+      await supabase.storage.from(bucket).uploadBinary(
             fileName,
             bytes,
-            fileOptions: const FileOptions(contentType: "image/jpeg"),
+            fileOptions: const FileOptions(
+              contentType: "image/jpeg",
+              upsert: true,
+            ),
           );
 
-      final imageUrl = supabase.storage.from('posts').getPublicUrl(fileName);
-      return imageUrl;
+      return fileName; // retorna somente o path (ex.: post_123.jpg)
     } catch (e) {
-      print("Erro ao fazer upload da imagem: $e");
+      developer.log("Erro ao fazer upload da imagem: $e");
       return null;
     }
   }
@@ -32,23 +37,13 @@ class PostsService {
   // --------------------------------------------------------------------------
   // APAGAR IMAGEM ANTIGA SE EXISTIR
   // --------------------------------------------------------------------------
-  static Future<void> deleteImageIfExists(String? imageUrl) async {
-    if (imageUrl == null || imageUrl.isEmpty) return;
+  static Future<void> deleteImageIfExists(String? imagePath) async {
+    if (imagePath == null || imagePath.isEmpty) return;
 
     try {
-      final uri = Uri.parse(imageUrl);
-      final segments = uri.pathSegments;
-
-      if (!segments.contains("posts")) return;
-
-      final index = segments.indexOf("posts");
-      final fileName = segments.sublist(index + 1).join("/");
-
-      if (fileName.isEmpty) return;
-
-      await supabase.storage.from("posts").remove([fileName]);
+      await supabase.storage.from(bucket).remove([imagePath]);
     } catch (e) {
-      print("Erro ao apagar imagem antiga: $e");
+      developer.log("Erro ao apagar imagem antiga: $e");
     }
   }
 
@@ -70,7 +65,7 @@ class PostsService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      print("Erro ao criar post: $e");
+      developer.log("Erro ao criar post: $e");
       rethrow;
     }
   }
@@ -93,7 +88,7 @@ class PostsService {
         'image_url': imageUrl,
       }).eq('id', id);
     } catch (e) {
-      print("Erro ao atualizar post: $e");
+      developer.log("Erro ao atualizar post: $e");
       rethrow;
     }
   }
@@ -105,7 +100,7 @@ class PostsService {
     try {
       await supabase.from('posts').delete().eq('id', id);
     } catch (e) {
-      print("Erro ao deletar post: $e");
+      developer.log("Erro ao deletar post: $e");
       rethrow;
     }
   }
@@ -120,9 +115,17 @@ class PostsService {
           .select('id, title, content, image_url, created_at, ong_id')
           .order('created_at', ascending: false);
 
-      return List<Map<String, dynamic>>.from(res);
+      final list = List<Map<String, dynamic>>.from(res);
+
+      return list.map((post) {
+        final path = post['image_url'];
+        if (path != null && path != "") {
+          post['image_url'] = supabase.storage.from(bucket).getPublicUrl(path);
+        }
+        return post;
+      }).toList();
     } catch (e) {
-      print("Erro ao listar posts: $e");
+      developer.log("Erro ao listar posts: $e");
       return [];
     }
   }
@@ -138,9 +141,17 @@ class PostsService {
           .eq('ong_id', ongId)
           .order('created_at', ascending: false);
 
-      return List<Map<String, dynamic>>.from(res);
+      final list = List<Map<String, dynamic>>.from(res);
+
+      return list.map((post) {
+        final path = post['image_url'];
+        if (path != null && path != "") {
+          post['image_url'] = supabase.storage.from(bucket).getPublicUrl(path);
+        }
+        return post;
+      }).toList();
     } catch (e) {
-      print("Erro ao listar posts por ONG: $e");
+      developer.log("Erro ao listar posts por ONG: $e");
       return [];
     }
   }

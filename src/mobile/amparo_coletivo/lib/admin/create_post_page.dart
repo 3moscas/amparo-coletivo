@@ -58,7 +58,7 @@ class _PostCreatePageState extends State<PostCreatePage> {
   }
 
   // --------------------------------------------------------------
-  // CARREGAR LISTA DE ONGs
+  // CARREGAR ONGs
   // --------------------------------------------------------------
   Future<void> _loadOngs() async {
     try {
@@ -66,6 +66,8 @@ class _PostCreatePageState extends State<PostCreatePage> {
           .from('ongs')
           .select('id, title')
           .order('title');
+
+      if (!mounted) return;
 
       setState(() {
         _ongs = List<Map<String, dynamic>>.from(res);
@@ -86,6 +88,8 @@ class _PostCreatePageState extends State<PostCreatePage> {
           .eq('id', _postId!)
           .single();
 
+      if (!mounted) return;
+
       setState(() {
         _titleController.text = res['title'];
         _contentController.text = res['content'];
@@ -103,11 +107,12 @@ class _PostCreatePageState extends State<PostCreatePage> {
   Future<void> _pickImage() async {
     try {
       if (kIsWeb) {
-        final picker = ImagePicker();
-        final picked = await picker.pickImage(source: ImageSource.gallery);
-
+        final picked =
+            await ImagePicker().pickImage(source: ImageSource.gallery);
         if (picked != null) {
           final bytes = await picked.readAsBytes();
+
+          if (!mounted) return;
           setState(() => _selectedImageBytes = bytes);
         }
       } else {
@@ -117,6 +122,7 @@ class _PostCreatePageState extends State<PostCreatePage> {
         );
 
         if (result != null && result.files.single.bytes != null) {
+          if (!mounted) return;
           setState(() => _selectedImageBytes = result.files.single.bytes);
         }
       }
@@ -136,20 +142,22 @@ class _PostCreatePageState extends State<PostCreatePage> {
     try {
       String? newImageUrl;
 
+      // UPLOAD DE IMAGEM
       if (_selectedImageBytes != null) {
         newImageUrl = await PostsService.uploadPostImage(
           bytes: _selectedImageBytes!,
           postId: _postId,
         );
 
+        // APAGA IMAGEM ANTIGA SE ESTIVER EDITANDO
         if (_editing &&
             _currentImageUrl != null &&
             newImageUrl != _currentImageUrl) {
           await PostsService.deleteImageIfExists(_currentImageUrl!);
-          ;
         }
       }
 
+      // EDITAR POST EXISTENTE
       if (_editing) {
         await _postsService.updatePost(
           id: _postId!,
@@ -159,6 +167,7 @@ class _PostCreatePageState extends State<PostCreatePage> {
           imageUrl: newImageUrl ?? _currentImageUrl,
         );
       } else {
+        // CRIAR NOVO POST
         await _postsService.createPost(
           title: _titleController.text,
           content: _contentController.text,
@@ -171,11 +180,15 @@ class _PostCreatePageState extends State<PostCreatePage> {
       Navigator.pop(context, true);
     } catch (e) {
       debugPrint("Erro ao salvar post: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erro ao salvar postagem.")),
-      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Erro ao salvar postagem.")),
+        );
+      }
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
   }
 

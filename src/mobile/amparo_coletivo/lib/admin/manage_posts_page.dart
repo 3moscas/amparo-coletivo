@@ -1,10 +1,12 @@
-import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/foundation.dart';
 
 class PostsService {
   static final SupabaseClient _supabase = Supabase.instance.client;
-  static const String bucket = "posts";
+
+  // NOVO BUCKET
+  static const String bucket = "post_images";
 
   // ----------------------------------------------------------
   // LISTAR TODOS OS POSTS
@@ -67,7 +69,7 @@ class PostsService {
   }
 
   // ----------------------------------------------------------
-  // DELETAR POST
+  // DELETAR POST (somente registro)
   // ----------------------------------------------------------
   Future<void> deletePost(String postId) async {
     await _supabase.from('posts').delete().eq('id', postId);
@@ -87,21 +89,37 @@ class PostsService {
     await _supabase.storage.from(bucket).uploadBinary(
           filePath,
           bytes,
-          fileOptions:
-              const FileOptions(contentType: "image/jpeg", upsert: true),
+          fileOptions: const FileOptions(
+            contentType: "image/jpeg",
+            upsert: true,
+          ),
         );
 
-    final url = _supabase.storage.from(bucket).getPublicUrl(filePath);
-    return url;
+    return _supabase.storage.from(bucket).getPublicUrl(filePath);
   }
 
   // ----------------------------------------------------------
-  // REMOVER IMAGEM DO STORAGE
+  // REMOVER IMAGEM DO STORAGE (SE EXISTIR)
   // ----------------------------------------------------------
-  Future<void> removeFile(String imageUrl) async {
+  static Future<void> deleteImageIfExists(String imageUrl) async {
     if (imageUrl.isEmpty) return;
 
-    final fileName = imageUrl.split('/').last;
-    await _supabase.storage.from(bucket).remove([fileName]);
+    try {
+      if (imageUrl.isEmpty) return;
+
+      String filePath = imageUrl;
+
+      // Se for URL completa, extrai o path após "<bucket>/"
+      if (imageUrl.contains("$bucket/")) {
+        final parts = imageUrl.split("$bucket/");
+        if (parts.length >= 2) {
+          filePath = parts.last;
+        }
+      }
+
+      await _supabase.storage.from(bucket).remove([filePath]);
+    } catch (e) {
+      debugPrint("Erro ao deletar imagem: $e");
+    }
   }
 }

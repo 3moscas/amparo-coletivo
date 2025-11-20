@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:amparo_coletivo/shared/widgets/custom_drawer.dart';
 import 'package:amparo_coletivo/presentation/pages/ong_posts_page.dart';
 
 class AboutOngPage extends StatelessWidget {
@@ -10,17 +9,18 @@ class AboutOngPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const CustomDrawer(),
+      // AppBar com botão de voltar
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: Text(ongData['title'] ?? 'Sobre a ONG'),
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
+        centerTitle: true,
       ),
+
+      // Botão flutuante
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -34,25 +34,13 @@ class AboutOngPage extends StatelessWidget {
         icon: const Icon(Icons.article),
         backgroundColor: Colors.blue,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushNamed(context, '/');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/perfil');
-          }
-        },
-      ),
+
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 16),
+
+            // Imagem da ONG
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: ongData['image_url'] != null &&
@@ -72,6 +60,8 @@ class AboutOngPage extends StatelessWidget {
                     ),
             ),
             const SizedBox(height: 20),
+
+            // Título e descrição
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(

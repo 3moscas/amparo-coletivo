@@ -2,20 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:amparo_coletivo/presentation/pages/main_navigation.dart';
-import 'config/theme_config.dart';
-import 'config/theme_notifier.dart';
+import 'package:amparo_coletivo/config/theme_config.dart';
+import 'package:amparo_coletivo/config/theme_notifier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
-
-// import 'package:provider/provider.dart'; Importação duplicada removida
 
 // Importando as páginas
 import 'package:amparo_coletivo/presentation/pages/auth/register_page.dart';
 import 'package:amparo_coletivo/presentation/pages/auth/login_page.dart';
 import 'package:amparo_coletivo/presentation/pages/change_password.dart';
 import 'package:amparo_coletivo/presentation/pages/admin_page.dart';
-import 'package:amparo_coletivo/presentation/pages/auth/esqueci_senha_page.dart';
 import 'package:amparo_coletivo/presentation/pages/about_ong_page.dart';
+import 'package:amparo_coletivo/presentation/pages/auth/esqueci_senha_page.dart';
 
 Future<void> main() async {
   await Supabase.initialize(
@@ -54,18 +52,17 @@ class App extends StatelessWidget {
         '/': (context) => const MainNavigation(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/about': (context) => const AboutOngPage(ongData: {
+              'title': 'Amparo Coletivo',
+              'description':
+                  'O Amparo Coletivo é uma plataforma dedicada a conectar ONGs e pessoas que desejam ajudar. Nosso objetivo é facilitar o acesso a informações sobre ONGs, promovendo a transparência e a solidariedade.',
+              'imageUrl':
+                  'https://luooeidsfkypyctvytok.supabase.co/storage/v1/object/public/amparo_coletivo/Amparo_Coletivo-logo.png',
+              'contactEmail': 'AmparoColetivo.suporte@gmail.com'
+            }),
         '/change_password': (context) => const ChangePasswordPage(),
         '/admin': (context) => const AdminPage(),
         '/forgot_password': (context) => const EsqueciSenhaPage(),
-        '/about': (context) => const AboutOngPage(
-              ongData: {
-                'title': 'Amparo Coletivo',
-                'description':
-                    'O Amparo Coletivo é uma plataforma dedicada a conectar ONGs e pessoas que desejam ajudar. Nosso objetivo é facilitar o acesso a informações sobre ONGs, promovendo a transparência e a solidariedade.',
-                'imageUrl': 'https://picsum.photos/200/300',
-                'contactEmail': 'AmparoColetivo.suporte@gmail.com'
-              },
-            ),
       },
     );
   }

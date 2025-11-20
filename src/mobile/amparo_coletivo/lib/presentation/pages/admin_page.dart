@@ -1,7 +1,6 @@
 // admin_page.dart
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -116,7 +115,6 @@ class _AdminPageState extends State<AdminPage> {
     setState(() => _loading = true);
 
     try {
-      // Build data payload except image URLs (will fill after upload)
       final baseData = {
         'title': _titleController.text.trim(),
         'description': _descriptionController.text.trim(),
@@ -126,44 +124,38 @@ class _AdminPageState extends State<AdminPage> {
         'created_at': DateTime.now().toIso8601String(),
       };
 
-      String id; // string or int acceptable for eq()
+      String id;
 
       if (_editingId == null) {
-        // Insert minimal record to reserve id (so we can create folder ONG{id})
         final inserted =
             await supabase.from('ongs').insert(baseData).select('id').single();
         id = inserted['id'].toString();
       } else {
         id = _editingId!;
-        // ensure baseData is applied (but we will update later with image urls too)
         await supabase.from('ongs').update(baseData).eq('id', id);
       }
 
       final folder = 'ONG$id';
 
-      // Upload logo if chosen
-      String? logoPublicUrl = _logoUrl; // existing url if not replaced
+      String? logoPublicUrl = _logoUrl;
       if (_logoBytes != null) {
         final fileName = 'logo_${DateTime.now().millisecondsSinceEpoch}.png';
-        final path = '$folder/$fileName';
-        final uploaded = await _uploadBytesToBucket(_logoBytes!, path);
+        final uploaded =
+            await _uploadBytesToBucket(_logoBytes!, '$folder/$fileName');
         if (uploaded != null) logoPublicUrl = uploaded;
       }
 
-      // Upload gallery images if chosen (replace only those selected)
-      final List<String?> galleryUrls =
-          List<String?>.from(_photoUrls); // existing
+      final List<String?> galleryUrls = List<String?>.from(_photoUrls);
       for (int i = 0; i < 3; i++) {
         if (_photoBytes[i] != null) {
           final fileName =
               'foto${i + 1}_${DateTime.now().millisecondsSinceEpoch}.png';
-          final path = '$folder/$fileName';
-          final uploaded = await _uploadBytesToBucket(_photoBytes[i]!, path);
+          final uploaded =
+              await _uploadBytesToBucket(_photoBytes[i]!, '$folder/$fileName');
           if (uploaded != null) galleryUrls[i] = uploaded;
         }
       }
 
-      // Prepare final update data
       final updateData = {
         'image_url': logoPublicUrl,
         'foto_relevante1': galleryUrls[0],
@@ -171,22 +163,28 @@ class _AdminPageState extends State<AdminPage> {
         'foto_relevante3': galleryUrls[2],
       };
 
-      // Update DB with image urls
       await supabase.from('ongs').update(updateData).eq('id', id);
 
-      // reload list and reset form
       await _loadOngs();
+
       _clearForm();
 
+      // ----- FIX IMPORTANTE -----
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('ONG salva com sucesso!')),
       );
     } catch (e) {
       debugPrint('Erro salvar ONG: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Erro ao salvar: $e')));
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao salvar: $e')),
+      );
     } finally {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -205,40 +203,6 @@ class _AdminPageState extends State<AdminPage> {
       _photoUrls[i] = null;
     }
     setState(() {});
-  }
-
-  // ---- edit existing ONG: load fields and existing image URLs (do not download bytes) ----
-  void _startEdit(Map<String, dynamic> ong) {
-    _editingId = ong['id'].toString();
-    _titleController.text = ong['title'] ?? '';
-    _descriptionController.text = ong['description'] ?? '';
-    _sobreController.text = ong['sobre_ong'] ?? '';
-    _category = ong['category'];
-    _highlighted = ong['highlighted'] ?? false;
-
-    // existing urls
-    _logoUrl = ong['image_url'];
-    _photoUrls[0] = ong['foto_relevante1'];
-    _photoUrls[1] = ong['foto_relevante2'];
-    _photoUrls[2] = ong['foto_relevante3'];
-
-    // clear any selected bytes (user may replace)
-    _logoBytes = null;
-    for (int i = 0; i < 3; i++) _photoBytes[i] = null;
-
-    setState(() {});
-  }
-
-  Future<void> _deleteOng(dynamic id) async {
-    try {
-      await supabase.from('ongs').delete().eq('id', id);
-      await _loadOngs();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('ONG removida')));
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Erro ao remover: $e')));
-    }
   }
 
   // UI preview helper: show either selected bytes (memory) or existing url (network)
@@ -521,10 +485,16 @@ class _AdminPageState extends State<AdminPage> {
     try {
       await supabase.from('ongs').delete().eq('id', id);
       await _loadOngs();
+
+      if (!mounted) return;
+
       if (_editingId == id.toString()) _clearForm();
+
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('ONG removida')));
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Erro ao remover: $e')));
     }

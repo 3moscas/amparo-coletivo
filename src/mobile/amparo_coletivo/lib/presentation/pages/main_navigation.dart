@@ -59,9 +59,9 @@ class _MainNavigationState extends State<MainNavigation> {
             activeIcon: Icon(Icons.volunteer_activism, size: 30),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: Icon(Icons.person),
             label: '',
-            activeIcon: Icon(Icons.search, size: 30),
+            activeIcon: Icon(Icons.person, size: 30),
           ),
         ],
       ),
