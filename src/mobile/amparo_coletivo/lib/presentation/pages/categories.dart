@@ -1,41 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:amparo_coletivo/presentation/pages/list_by_category.dart';
 import 'package:amparo_coletivo/shared/widgets/custom_drawer.dart';
 
 class Categories extends StatelessWidget {
   const Categories({super.key});
 
+  static final SupabaseClient supabase = Supabase.instance.client;
+
+  // URL correta da API do Supabase
+  final String projectUrl =
+      "https://luooeidsfkypyctvytok.supabase.co/storage/v1";
+
   final List<Map<String, String>> categorias = const [
-    {
-      'nome': 'Saúde',
-      'imagem':
-          'https://images.unsplash.com/photo-1527613426441-4da17471b66d?q=80&w=1152&auto=format&fit=crop'
-    },
-    {
-      'nome': 'Educação',
-      'imagem':
-          'https://images.unsplash.com/photo-1512238972088-8acb84db0771?q=80&w=1170&auto=format&fit=crop'
-    },
-    {
-      'nome': 'Meio Ambiente',
-      'imagem':
-          'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1170&auto=format&fit=crop'
-    },
-    {
-      'nome': 'Animais',
-      'imagem':
-          'https://images.unsplash.com/photo-1493916665398-143bdeabe500?q=80&w=1074&auto=format&fit=crop'
-    },
-    {
-      'nome': 'Moradia',
-      'imagem':
-          'https://images.unsplash.com/photo-1516156008625-3a9d6067fab5?q=80&w=1170&auto=format&fit=crop'
-    },
-    {
-      'nome': 'Outros',
-      'imagem':
-          'https://images.unsplash.com/photo-1596495577886-d920f1b62f90?q=80&w=1170&auto=format&fit=crop'
-    },
+    {'nome': 'Saúde', 'imagem': 'saude.jpg'},
+    {'nome': 'Educação', 'imagem': 'educacao.jpg'},
+    {'nome': 'Meio Ambiente', 'imagem': 'meio_ambiente.jpg'},
+    {'nome': 'Animais', 'imagem': 'animais.jpg'},
+    {'nome': 'Moradia', 'imagem': 'moradia.jpg'},
+    {'nome': 'Outros', 'imagem': 'outros.jpg'},
   ];
 
   @override
@@ -59,7 +42,11 @@ class Categories extends StatelessWidget {
         itemBuilder: (context, index) {
           final categoria = categorias[index];
           final nome = categoria['nome']!;
-          final imagem = categoria['imagem']!;
+          final imagemArquivo = categoria['imagem']!;
+
+          // URL completa final do Supabase
+          final imagemUrl =
+              "$projectUrl/object/public/categories/$imagemArquivo";
 
           return GestureDetector(
             onTap: () {
@@ -76,13 +63,11 @@ class Categories extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.network(
-                    imagem,
+                    imagemUrl,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loading) {
                       if (loading == null) return child;
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     },
                     errorBuilder: (context, error, stack) => Container(
                       color: Colors.grey[300],
@@ -91,9 +76,7 @@ class Categories extends StatelessWidget {
                   ),
 
                   // camada escura
-                  Container(
-                    color: Colors.black.withValues(alpha: 0.35),
-                  ),
+                  Container(color: Colors.black.withValues(alpha: 0.35)),
 
                   // texto
                   Center(

@@ -30,7 +30,7 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex; // USA o índice recebido
+    _currentIndex = widget.initialIndex;
   }
 
   @override

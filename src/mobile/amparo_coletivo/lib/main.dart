@@ -36,6 +36,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeNotifier = provider.Provider.of<ThemeNotifier>(context);
 
+    // Pegando o usuário logado
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      logger.i('Auth UID: ${user.id}');
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Amparo Coletivo',
@@ -46,14 +52,7 @@ class App extends StatelessWidget {
         '/': (context) => const MainNavigation(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
-        '/about': (context) => const AboutOngPage(ongData: {
-              'title': 'Amparo Coletivo',
-              'description':
-                  'O Amparo Coletivo é uma plataforma dedicada a conectar ONGs e pessoas que desejam ajudar. Nosso objetivo é facilitar o acesso a informações sobre ONGs, promovendo a transparência e a solidariedade.',
-              'imageUrl':
-                  'https://luooeidsfkypyctvytok.supabase.co/storage/v1/object/public/amparo_coletivo/Amparo_Coletivo-logo.png',
-              'contactEmail': 'AmparoColetivo.suporte@gmail.com'
-            }),
+        '/about': (context) => AboutPage(),
         '/change_password': (context) => const ChangePasswordPage(),
         '/admin': (context) => const AdminPage(),
         '/forgot_password': (context) => const EsqueciSenhaPage(),

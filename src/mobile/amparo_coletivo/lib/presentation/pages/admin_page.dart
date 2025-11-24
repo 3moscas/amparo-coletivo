@@ -298,7 +298,7 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
-                    initialValue: _category,
+                    value: _category,
                     decoration: const InputDecoration(labelText: 'Categoria'),
                     items: _categories
                         .map((c) => DropdownMenuItem(value: c, child: Text(c)))

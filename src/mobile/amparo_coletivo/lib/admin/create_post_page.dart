@@ -210,7 +210,7 @@ class _PostCreatePageState extends State<PostCreatePage> {
                 child: Column(
                   children: [
                     DropdownButtonFormField<String>(
-                      initialValue: _selectedOngId,
+                      value: _selectedOngId,
                       decoration: const InputDecoration(labelText: "ONG"),
                       items: _ongs.map((ong) {
                         return DropdownMenuItem<String>(

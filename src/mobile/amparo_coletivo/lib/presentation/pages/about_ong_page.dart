@@ -1,89 +1,103 @@
 import 'package:flutter/material.dart';
-import 'package:amparo_coletivo/presentation/pages/ong_posts_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AboutOngPage extends StatelessWidget {
-  final Map<String, dynamic> ongData;
+class AboutPage extends StatelessWidget {
+  AboutPage({super.key});
 
-  const AboutOngPage({super.key, required this.ongData});
+  final supabase = Supabase.instance.client;
+
+  // Lista atualizada de integrantes
+  final List<Map<String, String>> integrantes = [
+    {"nome": "Leandro Alves", "foto": "integrantes/leandro.png"},
+    {"nome": "Frank Lima", "foto": "integrantes/frank.png"},
+    {"nome": "Lucas Arantes", "foto": "integrantes/arantes.png"},
+    {"nome": "Lucas Ferreira", "foto": "integrantes/ferreira.png"},
+    {"nome": "Bruno Alves", "foto": "integrantes/bruno.png"},
+    {"nome": "Fernando Claudiano", "foto": "integrantes/fernando.png"},
+  ];
 
   @override
   Widget build(BuildContext context) {
+    // URL da logo
+    final logoUrl = supabase.storage
+        .from('amparo_coletivo')
+        .getPublicUrl('logo/Amparo_Coletivo-logo.png');
+
     return Scaffold(
-      // AppBar com botão de voltar
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text(ongData['title'] ?? 'Sobre a ONG'),
+        title: const Text("Sobre o Amparo Coletivo"),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        centerTitle: true,
       ),
-
-      // Botão flutuante
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => OngPostsPage(ongData: ongData),
-            ),
-          );
-        },
-        label: const Text('Ver postagens'),
-        icon: const Icon(Icons.article),
-        backgroundColor: Colors.blue,
-      ),
-
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 16),
-
-            // Imagem da ONG
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: ongData['image_url'] != null &&
-                      ongData['image_url'].toString().isNotEmpty
-                  ? Image.network(
-                      ongData['image_url'],
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: 200,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      color: Colors.grey.shade300,
-                      height: 200,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      alignment: Alignment.center,
-                      child: const Text("Sem imagem disponível"),
-                    ),
+            // LOGO MAIOR
+            Image.network(
+              logoUrl,
+              height: 180, // AQUI AUMENTEI O TAMANHO
+              fit: BoxFit.contain,
             ),
+            const SizedBox(height: 25),
+
+            const Text(
+              "O Amparo Coletivo é um projeto dedicado a conectar pessoas que desejam ajudar com ONGs que realmente precisam. "
+              "Nosso objetivo é facilitar doações e promover impacto social real através da tecnologia.",
+              style: TextStyle(fontSize: 17, height: 1.5),
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 40),
+
+            const Text(
+              "Integrantes do Projeto",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+
             const SizedBox(height: 20),
 
-            // Título e descrição
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  Text(
-                    ongData['title'] ?? 'ONG',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    ongData['description'] ??
-                        'Essa ONG ainda não possui uma descrição.',
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+            // GRID DE INTEGRANTES
+            GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: integrantes.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 3 por linha (ajusta automático)
+                mainAxisExtent: 150, // Altura dos cards
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
+              itemBuilder: (_, index) {
+                final integrante = integrantes[index];
+
+                final fotoUrl = supabase.storage
+                    .from('amparo_coletivo')
+                    .getPublicUrl(integrante["foto"]!);
+
+                return Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(fotoUrl),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      integrante["nome"]!,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  ],
+                );
+              },
             ),
-            const SizedBox(height: 30),
           ],
         ),
       ),

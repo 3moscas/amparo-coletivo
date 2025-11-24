@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:amparo_coletivo/presentation/pages/main_navigation.dart';
-import 'package:amparo_coletivo/services/logger_service.dart';
+
+var logger = Logger();
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
