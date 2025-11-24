@@ -450,7 +450,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       await supabase.auth.signOut();
       if (!mounted) return;
-      context.go(AppRoutes.signin);
+      setState(() {});
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
