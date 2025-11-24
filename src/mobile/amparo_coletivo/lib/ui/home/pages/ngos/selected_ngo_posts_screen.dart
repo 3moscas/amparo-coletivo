@@ -1,16 +1,16 @@
-// lib/presentation/pages/ong_posts_page.dart
+// ONG posts listing screen
 import 'package:flutter/material.dart';
 import 'package:amparo_coletivo/services/posts_service.dart';
 
-class OngPostsPage extends StatefulWidget {
+class SelectedNGOPostsScreen extends StatefulWidget {
   final Map<String, dynamic> ongData;
-  const OngPostsPage({super.key, required this.ongData});
+  const SelectedNGOPostsScreen({super.key, required this.ongData});
 
   @override
-  State<OngPostsPage> createState() => _OngPostsPageState();
+  State<SelectedNGOPostsScreen> createState() => _SelectedNGOPostsScreenState();
 }
 
-class _OngPostsPageState extends State<OngPostsPage> {
+class _SelectedNGOPostsScreenState extends State<SelectedNGOPostsScreen> {
   final PostsService _service = PostsService();
   bool loading = true;
   List<Map<String, dynamic>> posts = [];
@@ -43,6 +43,7 @@ class _OngPostsPageState extends State<OngPostsPage> {
   @override
   Widget build(BuildContext context) {
     final ongTitle = widget.ongData['title'] ?? 'Publicações';
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: Text('Publicações — $ongTitle')),
       body: loading
@@ -68,8 +69,13 @@ class _OngPostsPageState extends State<OngPostsPage> {
                                 width: double.infinity,
                                 height: 180,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                    height: 180, color: Colors.grey[200])),
+                                errorBuilder: (_, __, ___) => const SizedBox(
+                                      height: 180,
+                                      child: Center(
+                                        child: Icon(
+                                            Icons.image_not_supported_outlined),
+                                      ),
+                                    )),
                           Padding(
                             padding: const EdgeInsets.all(12),
                             child: Column(
@@ -87,8 +93,7 @@ class _OngPostsPageState extends State<OngPostsPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(_formatDate(p['created_at']),
-                                        style: const TextStyle(
-                                            color: Colors.grey)),
+                                        style: textTheme.bodySmall),
                                     Row(children: [
                                       const Icon(Icons.favorite_border,
                                           size: 18),

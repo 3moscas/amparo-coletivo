@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:amparo_coletivo/shared/widgets/custom_drawer.dart';
 
-class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({super.key});
+class ChangePasswordScreen extends StatefulWidget {
+  const ChangePasswordScreen({super.key});
 
   @override
-  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
 }
 
-class _ChangePasswordPageState extends State<ChangePasswordPage> {
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isObscure1 = true;
   bool _isObscure2 = true;
   bool _isLoading = false;
+
+  InputDecoration _fieldDecoration(String label, {Widget? suffix}) {
+    return InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      suffixIcon: suffix,
+    );
+  }
 
   void _changePassword() async {
     final newPassword = _newPasswordController.text.trim();
@@ -69,28 +76,22 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Trocar Senha"),
-        backgroundColor: Colors.blue,
       ),
-      drawer: const CustomDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
             const SizedBox(height: 20),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Digite sua nova senha:"),
-            ),
             TextField(
               controller: _newPasswordController,
               obscureText: _isObscure1,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.purple[50],
-                suffixIcon: IconButton(
+              decoration: _fieldDecoration(
+                'Digite sua nova senha',
+                suffix: IconButton(
                   icon: Icon(
                       _isObscure1 ? Icons.visibility_off : Icons.visibility),
                   onPressed: () => setState(() => _isObscure1 = !_isObscure1),
@@ -98,17 +99,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
             ),
             const SizedBox(height: 16),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Confirme sua nova senha:"),
-            ),
             TextField(
               controller: _confirmPasswordController,
               obscureText: _isObscure2,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.purple[50],
-                suffixIcon: IconButton(
+              decoration: _fieldDecoration(
+                'Confirme sua nova senha',
+                suffix: IconButton(
                   icon: Icon(
                       _isObscure2 ? Icons.visibility_off : Icons.visibility),
                   onPressed: () => setState(() => _isObscure2 = !_isObscure2),
@@ -118,16 +114,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _isLoading ? null : _changePassword,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[400],
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               child: _isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
+                  ? CircularProgressIndicator(
+                      color: colorScheme.onSecondary,
+                    )
                   : const Text("Alterar senha"),
             ),
           ],

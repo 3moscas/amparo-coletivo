@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:amparo_coletivo/presentation/info_ongs/ongs_page.dart';
+import 'package:amparo_coletivo/ui/home/pages/ngos/selected_ngo_screen.dart';
 
-class ListaOngsPorCategoriaPage extends StatefulWidget {
+class SelectedCategoryPage extends StatefulWidget {
   final String category;
 
-  const ListaOngsPorCategoriaPage({super.key, required this.category});
+  const SelectedCategoryPage({super.key, required this.category});
 
   @override
-  State<ListaOngsPorCategoriaPage> createState() =>
-      _ListaOngsPorCategoriaPageState();
+  State<SelectedCategoryPage> createState() => _SelectedCategoryPageState();
 }
 
-class _ListaOngsPorCategoriaPageState extends State<ListaOngsPorCategoriaPage> {
+class _SelectedCategoryPageState extends State<SelectedCategoryPage> {
   List<Map<String, dynamic>> ongs = [];
   bool isLoading = true;
 
@@ -29,19 +28,23 @@ class _ListaOngsPorCategoriaPageState extends State<ListaOngsPorCategoriaPage> {
           .select()
           .eq('category', widget.category);
 
+      if (!mounted) return;
       setState(() {
         ongs = List<Map<String, dynamic>>.from(response);
-        isLoading = false;
       });
     } catch (e) {
       debugPrint('Erro ao carregar ONGs: $e');
+    } finally {
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ONGs de ${widget.category}')),
+      appBar: AppBar(title: Text(widget.category)),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : ongs.isEmpty
@@ -60,7 +63,9 @@ class _ListaOngsPorCategoriaPageState extends State<ListaOngsPorCategoriaPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => OngsPage(ongData: ong),
+                              builder: (_) => SelectedNGOScreen(
+                                ongData: ong,
+                              ),
                             ),
                           );
                         },

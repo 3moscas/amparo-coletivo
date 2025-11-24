@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:amparo_coletivo/shared/widgets/custom_drawer.dart';
-import 'package:amparo_coletivo/presentation/pages/ong_posts_page.dart';
+import 'package:amparo_coletivo/ui/home/pages/ngos/selected_ngo_posts_screen.dart';
 
-class OngsPage extends StatelessWidget {
+class SelectedNGOScreen extends StatelessWidget {
   final Map<String, dynamic> ongData;
 
-  const OngsPage({super.key, required this.ongData});
+  const SelectedNGOScreen({super.key, required this.ongData});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +23,7 @@ class OngsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Portfólio'),
-        backgroundColor: Colors.blue,
-        elevation: 0,
       ),
-      drawer: const CustomDrawer(),
 
       // ⚡ NOVO BOTÃO
       floatingActionButton: FloatingActionButton.extended(
@@ -35,13 +31,12 @@ class OngsPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => OngPostsPage(ongData: ongData),
+              builder: (_) => SelectedNGOPostsScreen(ongData: ongData),
             ),
           );
         },
         label: const Text('Ver publicações'),
         icon: const Icon(Icons.feed),
-        backgroundColor: Colors.blue,
       ),
 
       body: Center(
@@ -51,46 +46,48 @@ class OngsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Logo da ONG
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+              Card(
+                margin: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(
-                  children: [
-                    ClipOval(
-                      child: imagePath.startsWith("http")
-                          ? Image.network(
-                              imagePath,
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  'assets/imagem_padrao.jpg',
-                                  width: 120,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                            )
-                          : Image.asset(
-                              imagePath,
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      ClipOval(
+                        child: imagePath.startsWith("http")
+                            ? Image.network(
+                                imagePath,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/imagem_padrao.jpg',
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
+                            : Image.asset(
+                                imagePath,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      Text(
+                        title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -128,7 +125,6 @@ class OngsPage extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(horizontal: 5.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Colors.blue[100],
                         image: DecorationImage(
                           image: isNetwork
                               ? NetworkImage(item)
@@ -154,17 +150,17 @@ class OngsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+              Card(
+                margin: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey[100],
                 ),
-                child: Text(
-                  description.isNotEmpty ? description : "Sobre......",
-                  style: const TextStyle(color: Colors.grey),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    description.isNotEmpty ? description : "Sobre......",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ),
               ),
               const SizedBox(height: 30),
@@ -189,9 +185,7 @@ class FullScreenImageView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Visualizar imagem"),
-        backgroundColor: Colors.black,
       ),
-      backgroundColor: Colors.black,
       body: Center(
         child: Hero(
           tag: imageUrl,
@@ -199,7 +193,6 @@ class FullScreenImageView extends StatelessWidget {
             imageProvider: isNetwork
                 ? NetworkImage(imageUrl)
                 : AssetImage(imageUrl) as ImageProvider,
-            backgroundDecoration: const BoxDecoration(color: Colors.black),
             minScale: PhotoViewComputedScale.contained,
             maxScale: PhotoViewComputedScale.covered * 2.5,
           ),

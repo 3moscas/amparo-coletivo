@@ -1,5 +1,3 @@
-// lib/admin/post_create_page.dart
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,21 +5,21 @@ import 'package:file_picker/file_picker.dart';
 import 'package:amparo_coletivo/services/posts_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class PostCreatePage extends StatefulWidget {
+class CreateNGOPostScreen extends StatefulWidget {
   final String? postId;
   final String? selectedOngId;
 
-  const PostCreatePage({
+  const CreateNGOPostScreen({
     super.key,
     this.postId,
     this.selectedOngId,
   });
 
   @override
-  State<PostCreatePage> createState() => _PostCreatePageState();
+  State<CreateNGOPostScreen> createState() => _CreateNGOPostScreenState();
 }
 
-class _PostCreatePageState extends State<PostCreatePage> {
+class _CreateNGOPostScreenState extends State<CreateNGOPostScreen> {
   final _formKey = GlobalKey<FormState>();
   final PostsService _postsService = PostsService();
 
@@ -57,9 +55,6 @@ class _PostCreatePageState extends State<PostCreatePage> {
     _loadOngs();
   }
 
-  // --------------------------------------------------------------
-  // CARREGAR ONGs
-  // --------------------------------------------------------------
   Future<void> _loadOngs() async {
     try {
       final res = await Supabase.instance.client
@@ -77,9 +72,6 @@ class _PostCreatePageState extends State<PostCreatePage> {
     }
   }
 
-  // --------------------------------------------------------------
-  // CARREGAR POST EXISTENTE PARA EDIÇÃO
-  // --------------------------------------------------------------
   Future<void> _loadPostData() async {
     try {
       final res = await Supabase.instance.client
@@ -101,9 +93,6 @@ class _PostCreatePageState extends State<PostCreatePage> {
     }
   }
 
-  // --------------------------------------------------------------
-  // SELECIONAR IMAGEM
-  // --------------------------------------------------------------
   Future<void> _pickImage() async {
     try {
       if (kIsWeb) {
@@ -131,9 +120,6 @@ class _PostCreatePageState extends State<PostCreatePage> {
     }
   }
 
-  // --------------------------------------------------------------
-  // SALVAR POSTAGEM
-  // --------------------------------------------------------------
   Future<void> _savePost() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -192,9 +178,6 @@ class _PostCreatePageState extends State<PostCreatePage> {
     setState(() => _isLoading = false);
   }
 
-  // --------------------------------------------------------------
-  // INTERFACE
-  // --------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(

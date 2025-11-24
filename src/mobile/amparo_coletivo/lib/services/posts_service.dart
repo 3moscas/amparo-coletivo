@@ -1,15 +1,12 @@
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:developer' as developer;
+import 'dart:developer';
 
 final supabase = Supabase.instance.client;
 
 class PostsService {
-  static const String bucket = "post_images"; // 🔥 ATUALIZADO
+  static const String bucket = "post_images";
 
-  // --------------------------------------------------------------------------
-  // UPLOAD DE IMAGEM (WEB + MOBILE)
-  // --------------------------------------------------------------------------
   static Future<String?> uploadPostImage({
     required Uint8List bytes,
     String? postId,
@@ -27,29 +24,23 @@ class PostsService {
             ),
           );
 
-      return fileName; // retorna somente o path (ex.: post_123.jpg)
+      return fileName;
     } catch (e) {
-      developer.log("Erro ao fazer upload da imagem: $e");
+      log("Erro ao fazer upload da imagem: $e");
       return null;
     }
   }
 
-  // --------------------------------------------------------------------------
-  // APAGAR IMAGEM ANTIGA SE EXISTIR
-  // --------------------------------------------------------------------------
   static Future<void> deleteImageIfExists(String? imagePath) async {
     if (imagePath == null || imagePath.isEmpty) return;
 
     try {
       await supabase.storage.from(bucket).remove([imagePath]);
     } catch (e) {
-      developer.log("Erro ao apagar imagem antiga: $e");
+      log("Erro ao apagar imagem antiga: $e");
     }
   }
 
-  // --------------------------------------------------------------------------
-  // CRIAR POST
-  // --------------------------------------------------------------------------
   Future<void> createPost({
     required String title,
     required String content,
@@ -65,14 +56,11 @@ class PostsService {
         'created_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
-      developer.log("Erro ao criar post: $e");
+      log("Erro ao criar post: $e");
       rethrow;
     }
   }
 
-  // --------------------------------------------------------------------------
-  // ATUALIZAR POST
-  // --------------------------------------------------------------------------
   Future<void> updatePost({
     required String id,
     required String title,
@@ -88,26 +76,20 @@ class PostsService {
         'image_url': imageUrl,
       }).eq('id', id);
     } catch (e) {
-      developer.log("Erro ao atualizar post: $e");
+      log("Erro ao atualizar post: $e");
       rethrow;
     }
   }
 
-  // --------------------------------------------------------------------------
-  // DELETAR POST
-  // --------------------------------------------------------------------------
   Future<void> deletePost(String id) async {
     try {
       await supabase.from('posts').delete().eq('id', id);
     } catch (e) {
-      developer.log("Erro ao deletar post: $e");
+      log("Erro ao deletar post: $e");
       rethrow;
     }
   }
 
-  // --------------------------------------------------------------------------
-  // LISTAR TODOS OS POSTS
-  // --------------------------------------------------------------------------
   Future<List<Map<String, dynamic>>> listAllPosts() async {
     try {
       final res = await supabase
@@ -125,14 +107,11 @@ class PostsService {
         return post;
       }).toList();
     } catch (e) {
-      developer.log("Erro ao listar posts: $e");
+      log("Erro ao listar posts: $e");
       return [];
     }
   }
 
-  // --------------------------------------------------------------------------
-  // LISTAR POSTS POR ONG
-  // --------------------------------------------------------------------------
   Future<List<Map<String, dynamic>>> listPostsByOng(String ongId) async {
     try {
       final res = await supabase
@@ -151,7 +130,7 @@ class PostsService {
         return post;
       }).toList();
     } catch (e) {
-      developer.log("Erro ao listar posts por ONG: $e");
+      log("Erro ao listar posts por ONG: $e");
       return [];
     }
   }

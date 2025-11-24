@@ -1,16 +1,17 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:amparo_coletivo/presentation/pages/main_navigation.dart';
-import 'package:amparo_coletivo/services/logger_service.dart';
+import 'package:amparo_coletivo/ui/home/home_screen.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _SignUpScreenState extends State<SignUpScreen> {
   String? _selectedGender;
   final _nomeController = TextEditingController();
   final _sobrenomeController = TextEditingController();
@@ -18,17 +19,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final _senhaController = TextEditingController();
   bool _loading = false;
 
-  InputDecoration _inputDecoration(String hint) {
+  InputDecoration _inputDecoration(String label) {
     return InputDecoration(
-      hintText: hint,
-      filled: true,
-      fillColor: Colors.grey[200],
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide.none,
-      ),
+      labelText: label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
     );
   }
 
@@ -74,14 +68,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MainNavigation()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Cadastro realizado com sucesso!')),
       );
-    } catch (e) {
-      logger.e('Erro no cadastro: $e');
+    } catch (e, stackTrace) {
+      developer.log('Erro no cadastro: $e',
+          name: 'SignUp', error: e, stackTrace: stackTrace);
       _showError('Erro ao registrar. Verifique os dados ou tente novamente.');
     } finally {
       setState(() => _loading = false);
@@ -90,7 +85,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 
@@ -99,44 +97,30 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registre-se'),
-        centerTitle: true,
-        backgroundColor: Colors.blue,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Nome:'),
-            const SizedBox(height: 6),
             TextFormField(
                 controller: _nomeController,
-                decoration: _inputDecoration('Digite seu nome')),
+                decoration: _inputDecoration('Nome')),
             const SizedBox(height: 12),
-            const Text('Sobrenome:'),
-            const SizedBox(height: 6),
             TextFormField(
                 controller: _sobrenomeController,
-                decoration: _inputDecoration('Digite seu sobrenome')),
+                decoration: _inputDecoration('Sobrenome')),
             const SizedBox(height: 12),
-            const Text('E-mail:'),
-            const SizedBox(height: 6),
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration: _inputDecoration('example@gmail.com'),
+              decoration: _inputDecoration('E-mail'),
             ),
             const SizedBox(height: 12),
-            const Text('Senha:'),
-            const SizedBox(height: 6),
             TextFormField(
               controller: _senhaController,
               obscureText: true,
-              decoration: _inputDecoration('Digite sua senha'),
+              decoration: _inputDecoration('Senha'),
             ),
             const SizedBox(height: 16),
             const Text('Gênero:'),
@@ -154,17 +138,25 @@ class _RegisterPageState extends State<RegisterPage> {
               child: ElevatedButton(
                 onPressed: _loading ? null : _signUp,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE6C649),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
                   minimumSize: const Size(200, 48),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24.0)),
                 ),
                 child: _loading
-                    ? const CircularProgressIndicator(color: Colors.black)
-                    : const Text(
+                    ? CircularProgressIndicator(
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
+                      )
+                    : Text(
                         'Inscreva-se',
                         style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSecondaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
             ),
@@ -176,6 +168,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _genderOption(String gender, IconData icon, String label) {
     final isSelected = _selectedGender == gender;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Expanded(
       child: GestureDetector(
@@ -187,16 +180,19 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12.0),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.blue.shade50 : Colors.grey[200],
+            color: isSelected
+                ? colorScheme.primaryContainer
+                : colorScheme.surfaceContainerHighest,
             border: Border.all(
-              color: isSelected ? Colors.blue : Colors.grey,
+              color:
+                  isSelected ? colorScheme.primary : colorScheme.outlineVariant,
               width: isSelected ? 2.0 : 1.0,
             ),
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Column(
             children: [
-              Icon(icon, size: 32, color: Colors.blue),
+              Icon(icon, size: 32, color: colorScheme.primary),
               const SizedBox(height: 4),
               Text(label),
             ],

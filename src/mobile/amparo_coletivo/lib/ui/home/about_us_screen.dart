@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:amparo_coletivo/presentation/pages/ong_posts_page.dart';
+import 'package:amparo_coletivo/ui/home/pages/ngos/selected_ngo_posts_screen.dart';
 
-class AboutOngPage extends StatelessWidget {
+class AboutUsScreen extends StatelessWidget {
   final Map<String, dynamic> ongData;
 
-  const AboutOngPage({super.key, required this.ongData});
+  const AboutUsScreen({super.key, required this.ongData});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       // AppBar com botão de voltar
       appBar: AppBar(
-        backgroundColor: Colors.blue,
         title: Text(ongData['title'] ?? 'Sobre a ONG'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        centerTitle: true,
       ),
 
       // Botão flutuante
@@ -26,13 +21,12 @@ class AboutOngPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => OngPostsPage(ongData: ongData),
+              builder: (_) => SelectedNGOPostsScreen(ongData: ongData),
             ),
           );
         },
         label: const Text('Ver postagens'),
         icon: const Icon(Icons.article),
-        backgroundColor: Colors.blue,
       ),
 
       body: SingleChildScrollView(
@@ -52,7 +46,7 @@ class AboutOngPage extends StatelessWidget {
                       fit: BoxFit.cover,
                     )
                   : Container(
-                      color: Colors.grey.shade300,
+                      color: colorScheme.surfaceContainerHighest,
                       height: 200,
                       width: MediaQuery.of(context).size.width * 0.9,
                       alignment: Alignment.center,

@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
-
-class EsqueciSenhaPage extends StatefulWidget {
-  const EsqueciSenhaPage({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<EsqueciSenhaPage> createState() => _EsqueciSenhaPageState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
+
+  InputDecoration _fieldDecoration(String label, {Widget? prefix}) {
+    return InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      prefixIcon: prefix,
+    );
+  }
 
   void _enviarSolicitacao() {
     final email = _emailController.text.trim();
@@ -39,7 +46,6 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Recuperar Senha'),
-        backgroundColor: Colors.blue,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -62,14 +68,9 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
             const SizedBox(height: 32),
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'E-mail',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                prefixIcon: const Icon(Icons.email),
-                filled: true,
-                fillColor: Colors.grey.shade100,
+              decoration: _fieldDecoration(
+                'E-mail',
+                prefix: const Icon(Icons.email),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -80,14 +81,6 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
                 onPressed: _enviarSolicitacao,
                 icon: const Icon(Icons.send),
                 label: const Text('Enviar link'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  textStyle: const TextStyle(fontSize: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
               ),
             ),
           ],

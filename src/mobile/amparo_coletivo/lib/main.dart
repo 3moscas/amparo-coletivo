@@ -1,63 +1,66 @@
-// Arquivo principal do aplicativo Amparo Coletivo
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart' as provider;
-import 'package:amparo_coletivo/presentation/pages/main_navigation.dart';
-import 'package:amparo_coletivo/config/theme_config.dart';
-import 'package:amparo_coletivo/config/theme_notifier.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:provider/provider.dart';
+import 'dart:developer' as developer;
 
-// Importando as páginas
-import 'package:amparo_coletivo/presentation/pages/auth/register_page.dart';
-import 'package:amparo_coletivo/presentation/pages/auth/login_page.dart';
-import 'package:amparo_coletivo/presentation/pages/change_password.dart';
-import 'package:amparo_coletivo/presentation/pages/admin_page.dart';
-import 'package:amparo_coletivo/presentation/pages/about_ong_page.dart';
-import 'package:amparo_coletivo/presentation/pages/auth/esqueci_senha_page.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:amparo_coletivo/config/settings_controller.dart';
+import 'package:amparo_coletivo/config/theme.dart';
+import 'package:amparo_coletivo/routes/app_router.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: 'https://luooeidsfkypyctvytok.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1b29laWRzZmt5cHljdHZ5dG9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyMDMzNjcsImV4cCI6MjA2NTc3OTM2N30.kM_S-oLmRTTuBkbpKW2MUn3Ngl7ic0ZaGb-sltYzB0E',
   );
+  final settingsController = SettingsController();
+  await settingsController.init();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(),
-      child: const App(),
+    DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        return ChangeNotifierProvider.value(
+          value: settingsController,
+          child: App(
+            lightDynamicScheme: lightDynamic,
+            darkDynamicScheme: darkDynamic,
+          ),
+        );
+      },
     ),
   );
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({
+    super.key,
+    this.lightDynamicScheme,
+    this.darkDynamicScheme,
+  });
+
+  final ColorScheme? lightDynamicScheme;
+  final ColorScheme? darkDynamicScheme;
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = provider.Provider.of<ThemeNotifier>(context);
+    final settingsController = context.watch<SettingsController>();
+    final user = Supabase.instance.client.auth.currentUser;
 
-    return MaterialApp(
+    if (user == null) {
+      developer.log('No user logged in', name: 'App');
+    } else {
+      developer.log('Auth UID: ${user.id}', name: 'App');
+    }
+
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Amparo Coletivo',
-      theme: AppTheme.themeData,
-      darkTheme: ThemeData.dark(),
-      themeMode: themeNotifier.themeMode,
-      routes: {
-        '/': (context) => const MainNavigation(),
-        '/login': (context) => const LoginPage(),
-        '/register': (context) => const RegisterPage(),
-        '/about': (context) => const AboutOngPage(ongData: {
-              'title': 'Amparo Coletivo',
-              'description':
-                  'O Amparo Coletivo é uma plataforma dedicada a conectar ONGs e pessoas que desejam ajudar. Nosso objetivo é facilitar o acesso a informações sobre ONGs, promovendo a transparência e a solidariedade.',
-              'imageUrl':
-                  'https://luooeidsfkypyctvytok.supabase.co/storage/v1/object/public/amparo_coletivo/Amparo_Coletivo-logo.png',
-              'contactEmail': 'AmparoColetivo.suporte@gmail.com'
-            }),
-        '/change_password': (context) => const ChangePasswordPage(),
-        '/admin': (context) => const AdminPage(),
-        '/forgot_password': (context) => const EsqueciSenhaPage(),
-      },
+      theme: AppTheme.light(dynamicScheme: lightDynamicScheme),
+      darkTheme: AppTheme.dark(dynamicScheme: darkDynamicScheme),
+      themeMode: settingsController.themeMode,
+      routerConfig: AppRouter.router,
     );
   }
 }
