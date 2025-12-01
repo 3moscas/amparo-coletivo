@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF2E8B57),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           child: const Text(
                             'Esqueceu a senha?',
-                            style: TextStyle(color: Colors.blue),
+                            style: const TextStyle(color: Color(0xFF2E8B57)),
                           ),
                         ),
                       ),

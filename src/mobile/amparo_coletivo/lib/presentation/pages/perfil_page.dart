@@ -114,32 +114,6 @@ class _PerfilPageState extends State<PerfilPage> {
     }
   }
 
-  Future<void> _removerFavorito(String ongId) async {
-    final user = supabase.auth.currentUser;
-    if (user == null) return;
-
-    try {
-      await supabase
-          .from('favorites')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('ong_id', ongId);
-
-      // carregar novamente os favoritos
-      await _carregarFavoritos();
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Removido dos favoritos')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro: $e')),
-      );
-    }
-  }
-
   Future<void> _handleLogout() async {
     await supabase.auth.signOut();
     if (!mounted) return;
@@ -215,6 +189,8 @@ class _PerfilPageState extends State<PerfilPage> {
                 style:
                     const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
+
+            // ---------- EMAIL ----------
             Align(
               alignment: Alignment.centerLeft,
               child: Column(
@@ -232,6 +208,8 @@ class _PerfilPageState extends State<PerfilPage> {
               ),
             ),
             const SizedBox(height: 8),
+
+            // ---------- GÊNERO ----------
             if (genero != null && genero!.isNotEmpty)
               Align(
                 alignment: Alignment.centerLeft,
@@ -255,7 +233,10 @@ class _PerfilPageState extends State<PerfilPage> {
                   ],
                 ),
               ),
+
             const SizedBox(height: 12),
+
+            // ---------- BIO ----------
             if (bio != null && bio!.isNotEmpty)
               Align(
                 alignment: Alignment.centerLeft,
@@ -268,14 +249,13 @@ class _PerfilPageState extends State<PerfilPage> {
                             fontWeight: FontWeight.w500,
                             color: Colors.grey)),
                     const SizedBox(height: 4),
-                    Text(
-                      bio!,
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    Text(bio!, style: const TextStyle(fontSize: 16)),
                   ],
                 ),
               ),
+
             const SizedBox(height: 20),
+
             FilledButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -286,10 +266,14 @@ class _PerfilPageState extends State<PerfilPage> {
               icon: const Icon(Icons.edit),
               label: const Text('Editar Perfil'),
             ),
+
             const SizedBox(height: 24),
+
             _buildFavoritosTitle(),
             const SizedBox(height: 12),
+
             _buildFavoritosList(),
+
             const SizedBox(height: 40),
           ],
         ),
@@ -319,90 +303,76 @@ class _PerfilPageState extends State<PerfilPage> {
         textAlign: TextAlign.center,
       );
     }
+
     return SizedBox(
-      height: 180,
-      child: Center(
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          itemCount: favoritos.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
-            final ong = favoritos[index];
-            return InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => OngsPage(
-                      ongData: ong,
+      height: 165,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemCount: favoritos.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final ong = favoritos[index];
+
+          return InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => OngsPage(ongData: ong),
+                ),
+              );
+            },
+            child: Container(
+              width: 150,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  )
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(16)),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 11,
+                      child: Image.network(
+                        ong['image_url'] ?? '',
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.image_not_supported),
+                        ),
+                      ),
                     ),
                   ),
-                );
-              },
-              child: Container(
-                width: 120,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black12, blurRadius: 4)
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ClipRRect(
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(14)),
-                      child: SizedBox(
-                        height: 80,
-                        child: Image.network(
-                          ong['image_url'] ?? '',
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                              color: Colors.grey[200],
-                              child: const Icon(Icons.image_not_supported)),
-                        ),
-                      ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                    child: Text(
+                      ong['title'] ?? '',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 13),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              ong['title'] ?? '',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const Spacer(),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: GestureDetector(
-                                onTap: () => _removerFavorito(ong['id']),
-                                child: CircleAvatar(
-                                  radius: 14,
-                                  backgroundColor: Colors.red[100],
-                                  child: const Icon(Icons.delete_outline,
-                                      color: Colors.red, size: 18),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

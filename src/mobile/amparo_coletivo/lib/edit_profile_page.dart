@@ -18,7 +18,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _lastController = TextEditingController();
   final _bioController = TextEditingController();
 
-  String? genero; // 'male' ou 'female'
+  String? genero;
   String? avatarUrl;
   String? avatarPath;
   bool uploading = false;
@@ -51,7 +51,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       _firstController.text = res['first_name'] ?? '';
       _lastController.text = res['last_name'] ?? '';
-      genero = res['gender']; // deve ser 'male' ou 'female'
+      genero = res['gender'];
       _bioController.text = res['bio'] ?? '';
       avatarUrl = res['avatar_url'];
       avatarPath = res['avatar_path'];
@@ -138,36 +138,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  Future<void> _removerAvatar() async {
-    final user = supabase.auth.currentUser;
-    if (user == null || avatarPath == null || avatarPath!.isEmpty) return;
-
-    try {
-      final storage = supabase.storage.from('avatars');
-      await storage.remove([avatarPath!]);
-
-      await supabase
-          .from('usuarios')
-          .update({'avatar_url': null, 'avatar_path': null}).eq('id', user.id);
-
-      if (!mounted) return;
-      setState(() {
-        avatarUrl = null;
-        avatarPath = null;
-      });
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Avatar removido!')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao remover avatar: $e')),
-      );
-    }
-  }
-
   Future<void> _salvarPerfil() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -221,39 +191,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               ? const Icon(Icons.person, size: 60)
                               : null,
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            FloatingActionButton.small(
-                              heroTag: 'editAvatar',
-                              onPressed: uploading ? null : _uploadAvatar,
-                              child: uploading
-                                  ? const SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2))
-                                  : const Icon(Icons.camera_alt),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black12, blurRadius: 4)
-                                ],
-                              ),
-                              child: IconButton(
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
-                                onPressed:
-                                    avatarUrl != null ? _removerAvatar : null,
-                              ),
-                            ),
-                          ],
-                        )
+                        FloatingActionButton.small(
+                          heroTag: 'editAvatar',
+                          onPressed: uploading ? null : _uploadAvatar,
+                          child: uploading
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.camera_alt),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -293,8 +242,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     const SizedBox(height: 20),
                     FilledButton(
-                        onPressed: _salvarPerfil,
-                        child: const Text('Salvar alterações')),
+                      onPressed: _salvarPerfil,
+                      child: const Text('Salvar alterações'),
+                    ),
                   ],
                 ),
               ),

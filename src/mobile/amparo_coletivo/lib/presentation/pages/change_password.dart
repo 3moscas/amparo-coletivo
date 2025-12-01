@@ -72,7 +72,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Trocar Senha"),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF2E8B57),
       ),
       drawer: const CustomDrawer(),
       body: Padding(

@@ -13,9 +13,13 @@ class MyApp extends StatelessWidget {
       title: 'ONG App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF2E8B57),
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
       ),
-      //home: const AboutOngPage(),
+      home: const Placeholder(), // Coloque sua HomePage aqui
     );
   }
 }

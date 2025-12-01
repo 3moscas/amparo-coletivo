@@ -157,7 +157,7 @@ class _OngsPageState extends State<OngsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF2E8B57),
         elevation: 0,
         actions: [
           if (loadingFavorite)
@@ -201,7 +201,7 @@ class _OngsPageState extends State<OngsPage> {
 
         label: const Text('Ver publicações'),
         icon: const Icon(Icons.feed),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF2E8B57),
       ),
       body: Center(
         child: SingleChildScrollView(

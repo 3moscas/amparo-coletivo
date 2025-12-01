@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class EsqueciSenhaPage extends StatefulWidget {
   const EsqueciSenhaPage({super.key});
 
@@ -39,7 +38,7 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Recuperar Senha'),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF2E8B57),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -81,7 +80,7 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
                 icon: const Icon(Icons.send),
                 label: const Text('Enviar link'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: const Color(0xFF2E8B57),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   textStyle: const TextStyle(fontSize: 16),
                   shape: RoundedRectangleBorder(

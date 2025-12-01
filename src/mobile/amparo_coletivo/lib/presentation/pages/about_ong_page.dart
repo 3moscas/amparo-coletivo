@@ -8,11 +8,11 @@ class AboutPage extends StatelessWidget {
 
   // Lista atualizada de integrantes
   final List<Map<String, String>> integrantes = [
-    {"nome": "Leandro Alves", "foto": "integrantes/leandro.png"},
-    {"nome": "Frank Lima", "foto": "integrantes/frank.png"},
-    {"nome": "Lucas Arantes", "foto": "integrantes/arantes.png"},
-    {"nome": "Lucas Ferreira", "foto": "integrantes/ferreira.png"},
-    {"nome": "Bruno Alves", "foto": "integrantes/bruno.png"},
+    {"nome": "Leandro Alves", "foto": "integrantes/leandro.jpg"},
+    {"nome": "Frank Lima", "foto": "integrantes/frank.jpg"},
+    {"nome": "Lucas Arantes", "foto": "integrantes/arantes.jpg"},
+    {"nome": "Lucas Ferreira", "foto": "integrantes/ferreira.jpg"},
+    {"nome": "Bruno Alves", "foto": "integrantes/bruno.jpg"},
     {"nome": "Fernando Claudiano", "foto": "integrantes/fernando.png"},
   ];
 

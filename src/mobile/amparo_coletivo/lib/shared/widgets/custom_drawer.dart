@@ -46,7 +46,7 @@ class CustomDrawer extends StatelessWidget {
 
     return Drawer(
       child: Container(
-        color: Colors.blue,
+        color: const Color(0xFF2E8B57),
         child: Column(
           children: [
             Container(
