@@ -222,7 +222,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: genero,
+                      initialValue: genero,
                       items: generoMap.entries
                           .map((e) => DropdownMenuItem(
                                 value: e.key,

@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           child: const Text(
                             'Esqueceu a senha?',
-                            style: const TextStyle(color: Color(0xFF2E8B57)),
+                            style: TextStyle(color: Color(0xFF2E8B57)),
                           ),
                         ),
                       ),
